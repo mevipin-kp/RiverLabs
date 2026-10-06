@@ -1,17 +1,12 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { ArrowRight, ArrowUpRight, AudioLines, Blocks, Check, ChevronDown, Menu, Network, Play, ShieldCheck, Sparkles, Workflow, X } from '@lucide/vue'
+import { ArrowRight, ArrowUpRight, AudioLines, Check, Play, ShieldCheck, Sparkles } from '@lucide/vue'
 import ProductShowcase from './ProductShowcase.vue'
 import RiverFlowShowcase from './RiverFlowShowcase.vue'
 import ContactPage from './ContactPage.vue'
+import ExpertiseShowcase from './ExpertiseShowcase.vue'
+import SiteHeader from './SiteHeader.vue'
 
-const menuOpen = ref(false)
-const productsMenuOpen = ref(false)
-const mobileOpen = ref(false)
-const scrolled = ref(false)
-const solutionsButton = ref(null)
-const productsButton = ref(null)
-const mobileButton = ref(null)
 const activeHeroIndex = ref(0)
 const heroRotationPaused = ref(false)
 const heroHovered = ref(false)
@@ -37,6 +32,7 @@ const heroMessages = [
 ]
 const activeHeroMessage = computed(() => heroMessages[activeHeroIndex.value])
 const isContactPage = computed(() => window.location.pathname === '/contact')
+const isExpertisePage = computed(() => window.location.pathname === '/expertise')
 const products = [
   { name: 'River Auto', description: 'Automotive Management', href: '/products/river-auto' },
   { name: 'River Hire', description: 'Recruitment & HR Consultancy', href: '/products/river-hire' },
@@ -47,25 +43,6 @@ const products = [
 ]
 const currentProduct = computed(() => products.find(product => product.href === window.location.pathname))
 
-const serviceGroups = [
-  { name: 'AI Automation', label: 'Smarter everyday operations', description: 'Automate repetitive work with AI.', icon: Workflow, href: '#expertise', tone: 'lilac' },
-  { name: 'Odoo Implementation', label: 'Systems fitted to your business', description: 'Configure Odoo around your processes.', icon: Blocks, href: '#expertise', tone: 'lime' },
-  { name: 'ERP Solutions', label: 'Connected business systems', description: 'Make your systems work together.', icon: Network, href: '#expertise', tone: 'blue' },
-]
-
-function onScroll() { scrolled.value = window.scrollY > 24 }
-function closeMenus() { menuOpen.value = false; productsMenuOpen.value = false; mobileOpen.value = false }
-function onDocumentPointerDown(event) {
-  if (event.target.closest?.('.nav-menu-group, .mobile-menu-button, .mobile-nav')) return
-  closeMenus()
-}
-function onDocumentKeydown(event) {
-  if (event.key !== 'Escape') return
-  const focusTarget = mobileOpen.value ? mobileButton.value : productsMenuOpen.value ? productsButton.value : solutionsButton.value
-  const hadOpenMenu = menuOpen.value || productsMenuOpen.value || mobileOpen.value
-  closeMenus()
-  if (hadOpenMenu) focusTarget?.focus()
-}
 function selectHeroMessage(index) { activeHeroIndex.value = index }
 function onHeroFocusOut(event) {
   if (!event.currentTarget.contains(event.relatedTarget)) heroFocusWithin.value = false
@@ -80,46 +57,22 @@ function scheduleHeroRotation() {
   }, delay)
 }
 onMounted(() => {
-  window.addEventListener('scroll', onScroll, { passive: true })
-  document.addEventListener('pointerdown', onDocumentPointerDown)
-  document.addEventListener('keydown', onDocumentKeydown)
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     scheduleHeroRotation()
   }
 })
 onUnmounted(() => {
-  window.removeEventListener('scroll', onScroll)
-  document.removeEventListener('pointerdown', onDocumentPointerDown)
-  document.removeEventListener('keydown', onDocumentKeydown)
   window.clearTimeout(heroRotationTimer)
 })
 </script>
 
 <template>
   <ContactPage v-if="isContactPage" />
+  <ExpertiseShowcase v-else-if="isExpertisePage" />
   <RiverFlowShowcase v-else-if="currentProduct?.href === '/products/river-flow'" />
   <ProductShowcase v-else-if="currentProduct" :product="currentProduct" />
   <div v-else class="site-shell">
-    <header class="site-header" :class="{ compact: scrolled }">
-      <a class="wordmark" href="#top" aria-label="RiverLabs home" @click="closeMenus"><span class="sound-mark"><i></i><i></i><i></i><i></i><i></i></span><span>RiverLabs</span></a>
-      <nav class="desktop-nav" aria-label="Main navigation">
-        <div class="nav-menu-group">
-          <button ref="solutionsButton" id="solutions-menu-button" class="nav-trigger" :class="{ selected: menuOpen }" aria-controls="solutions-menu" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen; productsMenuOpen = false">Solutions <ChevronDown :size="15" /></button>
-          <Transition name="mega"><div v-show="menuOpen" id="solutions-menu" class="mega-menu" role="group" aria-labelledby="solutions-menu-button"><div class="mega-topline"><span>RIVERLABS EXPERTISE</span><span>Diagnose first. Automate next.</span></div><a v-for="service in serviceGroups" :key="service.name" :href="service.href" class="mega-product" @click="closeMenus"><span class="mega-icon" :class="service.tone"><component :is="service.icon" :size="20" /></span><span class="mega-copy"><strong>{{ service.name }} <ArrowUpRight :size="13" /></strong><small>{{ service.description }}</small></span><span class="mega-label">{{ service.label }}</span></a><div class="mega-footer"><span>Built around your processes</span><a href="#expertise" @click="closeMenus">Our expertise <ArrowRight :size="14" /></a></div></div></Transition>
-        </div>
-        <div class="nav-menu-group">
-          <button ref="productsButton" id="products-menu-button" class="nav-trigger" :class="{ selected: productsMenuOpen }" aria-controls="products-menu" :aria-expanded="productsMenuOpen" @click="productsMenuOpen = !productsMenuOpen; menuOpen = false">Products <ChevronDown :size="15" /></button>
-          <Transition name="mega"><div v-show="productsMenuOpen" id="products-menu" class="products-mega-menu" role="group" aria-labelledby="products-menu-button"><div class="mega-topline"><span>RIVERLABS PRODUCTS</span><span>Purpose-built business solutions</span></div><div class="products-mega-grid"><a v-for="product in products" :key="product.name" :href="product.href" class="product-mega-link" @click="closeMenus"><strong>{{ product.name }} <ArrowUpRight :size="13" /></strong><small v-if="product.description">{{ product.description }}</small></a></div></div></Transition>
-        </div>
-        <a href="#expertise">Our Expertise</a>
-        <a href="#site-footer">About</a>
-        <a href="/contact">Contact</a>
-      </nav>
-      <div class="header-right"><a class="sign-in" href="#expertise">What we do <ArrowUpRight :size="15" /></a><a class="header-cta" href="/contact">Get in touch <ArrowRight :size="16" /></a></div>
-      <button ref="mobileButton" class="mobile-menu-button" :aria-label="mobileOpen ? 'Close navigation menu' : 'Open navigation menu'" aria-controls="mobile-navigation" :aria-expanded="mobileOpen" @click="mobileOpen = !mobileOpen"><X v-if="mobileOpen" :size="22"/><Menu v-else :size="22"/></button>
-    </header>
-
-    <Transition name="mobile"><nav v-show="mobileOpen" id="mobile-navigation" class="mobile-nav" aria-label="Mobile navigation"><div class="mobile-nav-label">SOLUTIONS</div><a href="#expertise" @click="closeMenus"><Workflow :size="19"/> AI Automation <ArrowRight :size="16"/></a><a href="#expertise" @click="closeMenus"><Blocks :size="19"/> Odoo Implementation <ArrowRight :size="16"/></a><a href="#expertise" @click="closeMenus"><Network :size="19"/> ERP Solutions <ArrowRight :size="16"/></a><div class="mobile-nav-label">PRODUCTS</div><a v-for="product in products" :key="product.name" :href="product.href" @click="closeMenus">{{ product.name }} <span v-if="product.description" class="mobile-product-description">— {{ product.description }}</span><ArrowRight :size="16"/></a><div class="mobile-nav-label">RIVERLABS</div><a href="#site-footer" @click="closeMenus">About <ArrowRight :size="16"/></a><a class="mobile-nav-cta" href="/contact" @click="closeMenus">Get in touch <ArrowRight :size="16"/></a></nav></Transition>
+    <SiteHeader />
 
     <main id="top">
       <section class="hero-section">
@@ -130,7 +83,7 @@ onUnmounted(() => {
             <Transition name="hero-message" mode="out-in"><div :key="activeHeroIndex" class="hero-message" role="group" aria-roledescription="slide" :aria-label="`Message ${activeHeroIndex + 1} of ${heroMessages.length}`"><h1 :aria-label="activeHeroMessage.heading"><span v-for="(line, index) in activeHeroMessage.lines" :key="line" :class="{ 'last-line': index === activeHeroMessage.lines.length - 1 }">{{ line.endsWith('.') ? line.slice(0, -1) : line }}<span v-if="line.endsWith('.')" class="period">.</span></span></h1><p class="hero-desc">{{ activeHeroMessage.description }}</p></div></Transition>
             <div class="hero-message-controls" role="group" aria-label="Choose an introduction message"><button v-for="(message, index) in heroMessages" :key="message.heading" class="hero-message-dot" :class="{ active: activeHeroIndex === index }" :aria-label="`Show message ${index + 1}: ${message.heading}`" :aria-pressed="activeHeroIndex === index" @click="selectHeroMessage(index)"><span></span></button><button class="hero-rotation-toggle" :aria-label="heroRotationPaused ? 'Resume message rotation' : 'Pause message rotation'" @click="heroRotationPaused = !heroRotationPaused"><Play v-if="heroRotationPaused" :size="13" fill="currentColor"/><span v-else class="pause-icon"><i></i><i></i></span></button></div>
             <div id="expertise" class="hero-expertise"><span>Our Expertise</span><div class="expertise-items"><span class="expertise-item">AI Automation</span><i>·</i><span class="expertise-item">Odoo Implementation</span><i>·</i><span class="expertise-item">ERP Solutions</span></div></div>
-            <div class="hero-actions"><a href="#expertise" class="button-dark">Explore our expertise <ArrowRight :size="16" /></a><a class="text-cta" href="/contact">Talk to our team <ArrowUpRight :size="15" /></a></div>
+            <div class="hero-actions"><a href="/expertise" class="button-dark">Explore our expertise <ArrowRight :size="16" /></a><a class="text-cta" href="/contact">Talk to our team <ArrowUpRight :size="15" /></a></div>
             <div class="hero-proof"><span class="proof-check"><Check :size="12" /></span><span>Designed around your processes</span><span class="proof-separator"></span><span>Your team stays in control</span></div>
           </div>
           <div class="hero-art" aria-label="RiverLabs automation workspace preview">
@@ -153,7 +106,7 @@ onUnmounted(() => {
 
     </main>
 
-    <footer id="site-footer" class="site-footer"><div class="footer-main"><div class="footer-brand-col"><a class="wordmark footer-wordmark" href="#top"><span class="sound-mark"><i></i><i></i><i></i><i></i><i></i></span><span>RiverLabs</span></a><p>Built Around Your<br/>Business.</p></div><div class="footer-column"><span>EXPERTISE</span><a href="#expertise">AI Automation <ArrowUpRight :size="12"/></a><a href="#expertise">Odoo Implementation <ArrowUpRight :size="12"/></a><a href="#expertise">ERP Solutions <ArrowUpRight :size="12"/></a></div><div class="footer-column"><span>OUR APPROACH</span><a href="#top">Process diagnosis <ArrowUpRight :size="12"/></a><a href="#expertise">Automation design <ArrowUpRight :size="12"/></a><a href="#expertise">Team enablement <ArrowUpRight :size="12"/></a></div><div class="footer-column"><span>GET IN TOUCH</span><a href="/contact">Start a conversation <ArrowUpRight :size="12"/></a><a href="#expertise">Explore our services <ArrowUpRight :size="12"/></a></div><div class="footer-newsletter"><span>THE OCCASIONAL GOOD THING</span><p>Practical ideas for better business systems and automation.</p><form @submit.prevent="($event.target.reset(), $event.target.classList.add('submitted'))"><input type="email" placeholder="Your email address" required/><button type="submit" aria-label="Subscribe"><ArrowRight :size="16"/></button><small>Thanks — you're on the list.</small></form></div></div><div class="footer-bottom"><span>© {{ year }} RiverLabs. All rights reserved.</span><div><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Cookies</a></div><span class="footer-location">MADE TO HEAR MORE <AudioLines :size="14"/></span></div></footer>
+    <footer id="site-footer" class="site-footer"><div class="footer-main"><div class="footer-brand-col"><a class="wordmark footer-wordmark" href="#top"><span class="sound-mark"><i></i><i></i><i></i><i></i><i></i></span><span>RiverLabs</span></a><p>Built Around Your<br/>Business.</p></div><div class="footer-column"><span>EXPERTISE</span><a href="/expertise#ai-automation">AI Automation <ArrowUpRight :size="12"/></a><a href="/expertise#odoo-implementation">Odoo Implementation <ArrowUpRight :size="12"/></a><a href="/expertise#erp-solutions">ERP Solutions <ArrowUpRight :size="12"/></a></div><div class="footer-column"><span>OUR APPROACH</span><a href="#top">Process diagnosis <ArrowUpRight :size="12"/></a><a href="/expertise#ai-automation">Automation design <ArrowUpRight :size="12"/></a><a href="/expertise#odoo-implementation">Team enablement <ArrowUpRight :size="12"/></a></div><div class="footer-column"><span>GET IN TOUCH</span><a href="/contact">Start a conversation <ArrowUpRight :size="12"/></a><a href="/expertise">Explore our services <ArrowUpRight :size="12"/></a></div><div class="footer-newsletter"><span>THE OCCASIONAL GOOD THING</span><p>Practical ideas for better business systems and automation.</p><form @submit.prevent="($event.target.reset(), $event.target.classList.add('submitted'))"><input type="email" placeholder="Your email address" required/><button type="submit" aria-label="Subscribe"><ArrowRight :size="16"/></button><small>Thanks — you're on the list.</small></form></div></div><div class="footer-bottom"><span>© {{ year }} RiverLabs. All rights reserved.</span><div><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Cookies</a></div><span class="footer-location">MADE TO HEAR MORE <AudioLines :size="14"/></span></div></footer>
 
   </div>
 </template>

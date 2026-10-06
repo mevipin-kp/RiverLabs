@@ -146,3 +146,9 @@
   .hero-message-dot span{width:7px;height:7px}
   .hero-message-dot.active span{width:21px}
 }
+
+
+/* The shared navigation stays consistent across every route. Subpages use the same compact, in-flow sticky bar. */
+.site-header.subpage{position:sticky;inset:auto;top:0;height:68px;min-height:68px;background:#fff;border-bottom:1px solid #e5e9ed;box-shadow:0 4px 16px rgb(17 30 44 / 4%);backdrop-filter:none}
+.site-header.subpage .wordmark{font-size:25px}
+@media(max-width:940px){.site-header.subpage,.site-header.subpage.compact{position:sticky;inset:auto;top:0;height:68px;min-height:68px;padding-inline:clamp(20px,5vw,38px);background:#fff;border-bottom:1px solid #e5e9ed;box-shadow:0 4px 16px rgb(17 30 44 / 4%)}}

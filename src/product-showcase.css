@@ -1,4 +1,4 @@
-.product-showcase{--preview-ink:#17232f;--preview-muted:#7d8791;--preview-blue:#28689f;--preview-line:#e5e9ed;min-height:100vh;background:#f6f8fa;color:#1c2732;overflow:hidden;font-family:'DM Sans',sans-serif}
+.product-showcase{--preview-ink:#17232f;--preview-muted:#7d8791;--preview-blue:#28689f;--preview-line:#e5e9ed;min-height:100vh;background:#f6f8fa;color:#1c2732;overflow:clip;font-family:'DM Sans',sans-serif}
 .showcase-header{height:72px;padding:0 clamp(22px,6vw,88px);display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #e5e9ed}
 .showcase-brand,.showcase-footer-brand{display:inline-flex;align-items:center;gap:10px;font:800 21px Manrope,sans-serif;letter-spacing:-.055em;color:#17212b}
 .showcase-mark{width:21px;height:23px;display:flex;align-items:center;justify-content:space-between;gap:2px}

@@ -1,4 +1,5 @@
 <script setup>
+import SiteHeader from './SiteHeader.vue'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ArrowRight, ArrowUpRight, Check, ChevronDown, Search, Sparkles, Workflow, X } from '@lucide/vue'
 
@@ -85,10 +86,7 @@ onUnmounted(() => window.clearInterval(rotationTimer))
 
 <template>
   <div class="river-flow-showcase">
-    <header class="flow-showcase-header">
-      <a href="/" class="flow-brand" aria-label="RiverLabs home"><span class="flow-brand-mark"><i></i><i></i><i></i><i></i><i></i></span><span>RiverLabs</span></a>
-      <div class="flow-header-right"><span>PRODUCT</span><strong>RiverFlow</strong><a href="/contact?product=river-flow">Talk to our team <ArrowUpRight :size="14" /></a></div>
-    </header>
+    <SiteHeader mode="subpage" />
 
     <main class="flow-showcase-main">
       <section class="flow-story" aria-label="RiverFlow product overview">

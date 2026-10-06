@@ -1,4 +1,5 @@
 <script setup>
+import SiteHeader from './SiteHeader.vue'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, ChevronDown, Search, Sparkles } from '@lucide/vue'
 
@@ -168,10 +169,7 @@ function statusTone(screen, row, index) {
 
 <template>
   <div class="product-showcase" :class="`showcase-${page.shortName.toLowerCase().replace(' ', '-')}`">
-    <header class="showcase-header">
-      <a class="showcase-brand" href="/" aria-label="RiverLabs home"><span class="showcase-mark"><i></i><i></i><i></i><i></i><i></i></span><span>RiverLabs</span></a>
-      <div class="showcase-header-links"><a class="showcase-back-link" href="/">All products <ArrowLeft :size="15" /></a><a class="showcase-header-cta" :href="contactHref">Talk to our team <ArrowUpRight :size="15" /></a></div>
-    </header>
+    <SiteHeader mode="subpage" />
 
     <main class="showcase-main-layout">
       <section class="showcase-story" aria-label="Product overview">

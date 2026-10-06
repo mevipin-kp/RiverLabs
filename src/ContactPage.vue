@@ -1,4 +1,5 @@
 <script setup>
+import SiteHeader from './SiteHeader.vue'
 import { onMounted, ref } from 'vue'
 import { ArrowLeft, ArrowRight, Check, Workflow } from '@lucide/vue'
 
@@ -23,10 +24,7 @@ function submitEnquiry(event) {
 
 <template>
   <div class="contact-page">
-    <header class="contact-page-header">
-      <a href="/" class="contact-brand" aria-label="RiverLabs home"><span class="contact-brand-mark"><i></i><i></i><i></i><i></i><i></i></span>RiverLabs</a>
-      <a href="/" class="contact-back"><ArrowLeft :size="14"/> Back to RiverLabs</a>
-    </header>
+    <SiteHeader mode="subpage" />
 
     <main class="contact-page-main">
       <section class="contact-page-intro">
