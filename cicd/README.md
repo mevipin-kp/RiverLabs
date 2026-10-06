@@ -29,8 +29,9 @@ Review `LIGHTSAIL_REGION`, `LIGHTSAIL_SERVICE_NAME`, `LIGHTSAIL_POWER`, and
 The first run creates a Lightsail Container Service if it does not already
 exist, builds the app image, pushes it, and deploys it with the HTTPS endpoint.
 Later runs publish a new image version to that same service. The default is a
-single Nano node in `eu-north-1`; change the service power if the app's memory
-or CPU metrics show it needs more capacity. Lightsail bills container services
+single Nano node in `eu-north-1`; the included configuration targets the
+existing `riverlabs` service. Change the service power if the app's memory or
+CPU metrics show it needs more capacity. Lightsail bills container services
 while they are enabled or disabled, and deleting a service is required to stop
 its service charges. See [AWS Lightsail container service pricing](https://aws.amazon.com/lightsail/pricing/)
 before creating the resource.
