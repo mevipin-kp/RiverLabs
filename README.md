@@ -38,3 +38,10 @@ Open the URL printed by Vite (usually `http://localhost:5173`). The frontend pro
 ```
 
 The API exposes `GET /api/health` and `GET /api/overview`. The RiverLabs homepage, hero preview, and expertise section are built in Vue.
+
+## Deploy to AWS Lightsail
+
+The production container builds the Vue frontend and runs it with the FastAPI
+backend. See [the Lightsail deployment guide](cicd/README.md) for prerequisites,
+configuration, and deployment commands. The deployment uses a Lightsail
+Container Service in `eu-north-1` by default and publishes an HTTPS endpoint.

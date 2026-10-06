@@ -1,9 +1,13 @@
 """RiverLabs API entry point."""
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse, Response
+
+WEB_ROOT = Path(__file__).resolve().parent / "dist"
 
 app = FastAPI(
     title="RiverLabs API",
@@ -45,3 +49,24 @@ def get_overview() -> dict[str, object]:
             {"name": "Demi Wilkinson", "initials": "DW", "action": "joined your workspace", "detail": "Team invitation", "amount": "—", "time": "1 hr ago", "tone": "green"},
         ],
     }
+
+
+@app.get("/api/{path:path}", include_in_schema=False)
+def unknown_api_route(path: str) -> JSONResponse:
+    """Keep unknown API URLs from falling through to the Vue application."""
+    return JSONResponse(status_code=404, content={"detail": "Not found"})
+
+
+@app.get("/{path:path}", include_in_schema=False)
+def serve_frontend(path: str = "") -> Response:
+    """Serve the built Vue app and support its client-side routes."""
+    if not WEB_ROOT.is_dir():
+        return JSONResponse(status_code=503, content={"detail": "Frontend build is not available"})
+
+    root = WEB_ROOT.resolve()
+    requested_file = (root / path).resolve()
+    if root not in requested_file.parents and requested_file != root:
+        requested_file = root / "index.html"
+    if not requested_file.is_file():
+        requested_file = root / "index.html"
+    return FileResponse(requested_file)
